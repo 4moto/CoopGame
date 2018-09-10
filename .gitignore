@@ -1,13 +1,26 @@
 #Unreal Generated Files#
 ########################
-*/Build
+
+# Whitelist PakBlacklist-<BuildConfiguration>.txt files
+!Build/*/
+Build/*/**
+!Build/*/PakBlacklist*.txt
+# Don't ignore icon files in Build
+!Build/**/*.ico
+
 */Binaries
 */DerivedDataCache
 */Intermediate
 */Saved
 
+# Built data for maps
+*_BuiltData.uasset
+
 ####################
 #VS Generated Files#
 ####################
 *.VC.db
+*.VC.opendb
+*.pch
+*.ipch
 
