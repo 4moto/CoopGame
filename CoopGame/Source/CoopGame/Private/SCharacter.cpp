@@ -5,6 +5,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Public/SWeapon.h"
 #include "CoopGame.h"
 
 
@@ -27,6 +28,10 @@ ASCharacter::ASCharacter()
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
 	CameraComp->SetupAttachment(SpringArmComp);
 
+	ZoomedFOV = 50;
+	ZoomedInterpSpeed = 20;
+
+	WeaponAttachSocketName = "WeaponSocket";
 }
 
 // Called when the game starts or when spawned
@@ -34,6 +39,22 @@ void ASCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	DefaultFOV = CameraComp->FieldOfView;
+
+//	if (Role == ROLE_Authority)
+//	{
+		//Spawn a default weapon
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+		CurrentWeapon = GetWorld()->SpawnActor<ASWeapon>(StarterWeaponClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
+		if (CurrentWeapon)
+		{
+			CurrentWeapon->SetOwner(this);
+			CurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponAttachSocketName);
+		}
+//	}
+
 }
 
 // Called every frame
@@ -41,6 +62,24 @@ void ASCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	float TargetFOV = bWantsToZoom ? ZoomedFOV : DefaultFOV;
+
+	float NewFOV = FMath::FInterpTo(CameraComp->FieldOfView, TargetFOV, DeltaTime, ZoomedInterpSpeed);
+
+	CameraComp->SetFieldOfView(NewFOV);
+
+}
+
+void ASCharacter::BeginZoom()
+{
+	bWantsToZoom = true;
+	SpringArmComp->CameraLagSpeed = 20;
+}
+
+void ASCharacter::EndZoom()
+{
+	bWantsToZoom = false;
+	SpringArmComp->CameraLagSpeed = 10;
 }
 
 void ASCharacter::MoveForward(float Value)
