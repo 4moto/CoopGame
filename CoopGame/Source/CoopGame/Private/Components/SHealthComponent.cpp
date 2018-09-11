@@ -12,7 +12,7 @@ USHealthComponent::USHealthComponent()
 
 	DefaultHealth = 100.0f;
 
-	SetIsReplicated(true);
+//	SetIsReplicated(true);
 }
 
 
@@ -48,11 +48,11 @@ void USHealthComponent::HandleTakeAnyDamage(AActor * DamagedActor, float Damage,
 	OnHealthChanged.Broadcast(this, Health, Damage, DamageType, InstigatedBy, DamageCauser);
 }
 
-
+/*
 void USHealthComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(USHealthComponent, Health);
 }
-
+*/

@@ -33,8 +33,8 @@ ASExplosiveBarrel::ASExplosiveBarrel()
 
 	ExplosionImpulse = 400;
 
-	bReplicates = true;
-	bReplicateMovement = true;
+//	bReplicates = true;
+//	bReplicateMovement = true;
 
 }
 
@@ -74,10 +74,11 @@ void ASExplosiveBarrel::OnRep_Exploded()
 	MeshComp->SetMaterial(0, ExplodedMaterial);
 }
 
-
+/*
 void ASExplosiveBarrel::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ASExplosiveBarrel, bExploded);
 }
+*/
