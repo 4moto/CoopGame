@@ -32,6 +32,8 @@ ASWeapon::ASWeapon()
 	TracerTargetName = "Target";
 	BaseDamage = 20.0f;
 	RateOfFire = 600; //Bullets Per Minute
+
+	SetReplicates(true);
 }
 
 // Called when the game starts or when spawned

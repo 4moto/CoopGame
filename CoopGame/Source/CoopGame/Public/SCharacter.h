@@ -59,6 +59,7 @@ protected:
 	void StartFire();
 	void StopFire();
 
+	UPROPERTY(Replicated)
 	ASWeapon* CurrentWeapon;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Player")

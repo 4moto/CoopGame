@@ -44,9 +44,10 @@ void ASCharacter::BeginPlay()
 	Super::BeginPlay();
 	
 	DefaultFOV = CameraComp->FieldOfView;
+	HealthComp->OnHealthChanged.AddDynamic(this, &ASCharacter::OnHealthChanged);
 
-//	if (Role == ROLE_Authority)
-//	{
+	if (Role == ROLE_Authority)
+	{
 		//Spawn a default weapon
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
@@ -57,8 +58,7 @@ void ASCharacter::BeginPlay()
 			CurrentWeapon->SetOwner(this);
 			CurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponAttachSocketName);
 		}
-//	}
-		HealthComp->OnHealthChanged.AddDynamic(this, &ASCharacter::OnHealthChanged);
+	}		
 }
 
 // Called every frame
@@ -181,12 +181,11 @@ FVector ASCharacter::GetPawnViewLocation() const
 	return Super::GetPawnViewLocation();
 }
 
-/*
+
 void ASCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ASCharacter, CurrentWeapon);
-	DOREPLIFETIME(ASCharacter, bDied);
+//	DOREPLIFETIME(ASCharacter, bDied);
 }
-*/
