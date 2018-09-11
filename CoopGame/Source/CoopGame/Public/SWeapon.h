@@ -64,6 +64,9 @@ protected:
 	//Derived from rate of fire
 	float TimeBetweenShots;
 
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerFire();
+
 	void PlayFireEffect(FVector TraceEnd);
 
 	void PlayImpactEffect(EPhysicalSurface SurfaceType, FVector ImpactPoint);
