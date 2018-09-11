@@ -40,7 +40,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	USkeletalMeshComponent* MeshComp;
+		USkeletalMeshComponent* MeshComp;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 		TSubclassOf<UDamageType> DamageType;
@@ -75,23 +75,23 @@ protected:
 
 	/* RPM - Bullets Per Minute*/
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
-	float RateOfFire;
+		float RateOfFire;
 
 	//Derived from rate of fire
 	float TimeBetweenShots;
 
 	UFUNCTION(Server, Reliable, WithValidation)
-	void ServerFire();
+		void ServerFire();
 
 	void PlayFireEffect(FVector TraceEnd);
 
 	void PlayImpactEffect(EPhysicalSurface SurfaceType, FVector ImpactPoint);
 
 	UPROPERTY(ReplicatedUsing=OnRep_HitScanTrace)
-	FHitScanTrace HitScanTrace;
+		FHitScanTrace HitScanTrace;
 
 	UFUNCTION()
-	void OnRep_HitScanTrace();
+		void OnRep_HitScanTrace();
 
 public:	
 
