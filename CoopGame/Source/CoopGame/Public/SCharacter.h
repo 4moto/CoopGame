@@ -52,6 +52,9 @@ protected:
 	void BeginZoom();
 	void EndZoom();
 
+	void StartFire();
+	void StopFire();
+
 	ASWeapon* CurrentWeapon;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Player")

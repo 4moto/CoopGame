@@ -70,17 +70,38 @@ void ASCharacter::Tick(float DeltaTime)
 
 }
 
+
+void ASCharacter::StartFire()
+{
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->StartFire();
+	}
+}
+
+
+void ASCharacter::StopFire()
+{
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->StopFire();
+	}
+}
+
+
 void ASCharacter::BeginZoom()
 {
 	bWantsToZoom = true;
 	SpringArmComp->CameraLagSpeed = 20;
 }
 
+
 void ASCharacter::EndZoom()
 {
 	bWantsToZoom = false;
 	SpringArmComp->CameraLagSpeed = 10;
 }
+
 
 void ASCharacter::MoveForward(float Value)
 {
@@ -93,10 +114,12 @@ void ASCharacter::MoveRight(float Value)
 	AddMovementInput(GetActorRightVector() * Value);
 }
 
+
 void ASCharacter::BeginCrouch()
 {
 	Crouch();
 }
+
 
 void ASCharacter::EndCrouch()
 {
@@ -118,7 +141,15 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &ASCharacter::BeginCrouch);
 	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &ASCharacter::EndCrouch);
+
+	PlayerInputComponent->BindAction("Zoom", IE_Pressed, this, &ASCharacter::BeginZoom);
+	PlayerInputComponent->BindAction("Zoom", IE_Released, this, &ASCharacter::EndZoom);
+
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ASCharacter::StartFire);
+	PlayerInputComponent->BindAction("Fire", IE_Released, this, &ASCharacter::StopFire);
+
 }
+
 
 FVector ASCharacter::GetPawnViewLocation() const
 {

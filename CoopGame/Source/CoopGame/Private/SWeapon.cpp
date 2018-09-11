@@ -120,6 +120,24 @@ void ASWeapon::Fire()
 }
 
 
+void ASWeapon::StartFire()
+{
+	float FirstDelay = FMath::Max(LastFireTime + TimeBetweenShots - GetWorld()->TimeSeconds, 0.0f);
+
+	GetWorldTimerManager().SetTimer(TimerHandle_TimeBetweenShots, this, &ASWeapon::Fire, TimeBetweenShots, true, FirstDelay);
+
+	/* Include this if you want to allow semi-auto to fire as fast as you can click! */
+	//	Fire();
+
+}
+
+
+void ASWeapon::StopFire()
+{
+	GetWorldTimerManager().ClearTimer(TimerHandle_TimeBetweenShots);
+}
+
+
 void ASWeapon::PlayFireEffect(FVector TraceEnd)
 {
 	if (MuzzleEffect)
