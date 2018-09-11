@@ -29,7 +29,7 @@ ASCharacter::ASCharacter()
 	CameraComp->SetupAttachment(SpringArmComp);
 
 	ZoomedFOV = 50;
-	ZoomedInterpSpeed = 20;
+	ZoomedInterpSpeed = 16;
 
 	WeaponAttachSocketName = "WeaponSocket";
 }

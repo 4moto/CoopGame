@@ -43,6 +43,7 @@ void ASWeapon::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	TimeBetweenShots = 60 / RateOfFire;
 }
 
 // Called every frame

@@ -41,10 +41,10 @@ protected:
 	bool bWantsToZoom;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Player")
-		float ZoomedFOV;
+	float ZoomedFOV;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Player", meta = (ClampMin = 0.1, ClampMax = 100))
-		float ZoomedInterpSpeed;
+	float ZoomedInterpSpeed;
 
 	/* Default FOV set during begin play */
 	float DefaultFOV;
