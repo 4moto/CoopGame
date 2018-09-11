@@ -100,7 +100,7 @@ void ASWeapon::Fire()
 			//Updates the particle "target" with the hit result
 			TracerEndPoint = Hit.ImpactPoint;
 
-			HitScanTrace.SurfaceType = SurfaceType;
+//Not sure where this came from			HitScanTrace.SurfaceType = SurfaceType;
 		}
 
 		if (DebugWeaponDrawing > 0)
