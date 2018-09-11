@@ -5,6 +5,8 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "../Public/Components/SHealthComponent.h"
+#include "Net/UnrealNetwork.h"
 #include "Public/SWeapon.h"
 #include "CoopGame.h"
 
@@ -27,6 +29,8 @@ ASCharacter::ASCharacter()
 
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
 	CameraComp->SetupAttachment(SpringArmComp);
+
+	HealthComp = CreateDefaultSubobject<USHealthComponent>(TEXT("HealthComp"));
 
 	ZoomedFOV = 50;
 	ZoomedInterpSpeed = 16;
