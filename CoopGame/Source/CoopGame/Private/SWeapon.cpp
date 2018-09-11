@@ -26,7 +26,7 @@ FAutoConsoleVariableRef CVARDebugWeapondDrawing(
 ASWeapon::ASWeapon()
 {
 	MeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("MeshComp"));
-	RootComponent; MeshComp;
+	RootComponent = MeshComp;
 
 	MuzzleSocketName = "MuzzleSocket";
 	TracerTargetName = "Target";
