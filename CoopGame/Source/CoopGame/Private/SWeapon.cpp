@@ -34,6 +34,9 @@ ASWeapon::ASWeapon()
 	RateOfFire = 600; //Bullets Per Minute
 
 	SetReplicates(true);
+
+	NetUpdateFrequency = 66.0f;
+	MinNetUpdateFrequency = 33.0f;
 }
 
 // Called when the game starts or when spawned
@@ -97,7 +100,7 @@ void ASWeapon::Fire()
 			//Updates the particle "target" with the hit result
 			TracerEndPoint = Hit.ImpactPoint;
 
-//			HitScanTrace.SurfaceType = SurfaceType;
+			HitScanTrace.SurfaceType = SurfaceType;
 		}
 
 		if (DebugWeaponDrawing > 0)
@@ -107,11 +110,11 @@ void ASWeapon::Fire()
 
 		PlayFireEffect(TracerEndPoint);
 
-//		if (Role == ROLE_Authority)
-//		{
-//			HitScanTrace.TraceTo = TracerEndPoint;
-//			HitScanTrace.SurfaceType = SurfaceType;
-//		}
+		if (Role == ROLE_Authority)
+		{
+			HitScanTrace.TraceTo = TracerEndPoint;
+			HitScanTrace.SurfaceType = SurfaceType;
+		}
 
 		LastFireTime = GetWorld()->TimeSeconds;
 	}
@@ -143,6 +146,14 @@ void ASWeapon::ServerFire_Implementation()
 bool ASWeapon::ServerFire_Validate()
 {
 	return true;
+}
+
+
+void ASWeapon::OnRep_HitScanTrace()
+{
+	// Play cosmetic FX
+	PlayFireEffect(HitScanTrace.TraceTo);
+	PlayImpactEffect(HitScanTrace.SurfaceType, HitScanTrace.TraceTo);
 }
 
 
@@ -199,4 +210,12 @@ void ASWeapon::PlayImpactEffect(EPhysicalSurface SurfaceType, FVector ImpactPoin
 
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), SelectedEffect, ImpactPoint, ShotDirection.Rotation());
 	}
+}
+
+
+void ASWeapon::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME_CONDITION(ASWeapon, HitScanTrace, COND_SkipOwner);
 }
