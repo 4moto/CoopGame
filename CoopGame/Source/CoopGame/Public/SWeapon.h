@@ -69,8 +69,6 @@ protected:
 	void PlayImpactEffect(EPhysicalSurface SurfaceType, FVector ImpactPoint);
 
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 	virtual void Fire();
 	virtual void StartFire();
