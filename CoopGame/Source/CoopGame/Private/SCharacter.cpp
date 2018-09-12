@@ -130,7 +130,7 @@ void ASCharacter::EndCrouch()
 	UnCrouch();
 }
 
-void ASCharacter::OnHealthChanged(USHealthComponent * HealthComp, float Health, float HealthDelta, const UDamageType * DamageType, AController * InstigatedBy, AActor * DamageCauser)
+void ASCharacter::OnHealthChanged(USHealthComponent* OwningHealthComp, float Health, float HealthDelta, const UDamageType * DamageType, AController * InstigatedBy, AActor * DamageCauser)
 {
 	if (Health <= 0.0f && !bDied)
 	{
