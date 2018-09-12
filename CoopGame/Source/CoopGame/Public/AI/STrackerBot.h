@@ -36,17 +36,34 @@ protected:
 	//Next point in navigation path
 	FVector NextPathPoint;
 
-	UPROPERTY(EditDefaultsOnly, Category = "TracketBot")
+	UPROPERTY(EditDefaultsOnly, Category = "TrackerBot")
 	float MovementForce;
 
-	UPROPERTY(EditDefaultsOnly, Category = "TracketBot")
+	UPROPERTY(EditDefaultsOnly, Category = "TrackerBot")
 	float RequiredDistanceToTarget;
 
-	UPROPERTY(EditDefaultsOnly, Category = "TracketBot")
+	UPROPERTY(EditDefaultsOnly, Category = "TrackerBot")
 	bool bUseVelocityChange;
 
 	// Dynamic Material to Pulse on Damage
 	UMaterialInstanceDynamic* MatInst;
+
+	void SelfDestruct();
+
+	UPROPERTY(EditDefaultsOnly, Category = "TrackerBot")
+	UParticleSystem* ExplosionEffect;
+
+	bool bExploded;
+
+	UPROPERTY(EditDefaultsOnly, Category = "TrackerBot")
+	float ExplosionRadius;
+
+	UPROPERTY(EditDefaultsOnly, Category = "TrackerBot")
+	float ExplosionDamage;
+
+	/* The scale of the explosion FX */
+	UPROPERTY(EditDefaultsOnly, Category = "FX")
+	FVector ExplosionScale;
 
 public:	
 	// Called every frame

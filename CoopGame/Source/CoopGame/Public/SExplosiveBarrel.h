@@ -50,6 +50,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "FX")
 		float ExplosionImpulse;
 
+	/* The scale of the explosion FX */
 	UPROPERTY(EditDefaultsOnly, Category = "FX")
 		FVector ExplosionScale;
 

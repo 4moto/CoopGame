@@ -27,6 +27,11 @@ ASTrackerBot::ASTrackerBot()
 	MovementForce = 1000.0f;
 	RequiredDistanceToTarget = 100.0f;
 	bUseVelocityChange = true;
+
+	ExplosionDamage = 40.0f;
+	ExplosionRadius = 200.0f;
+
+	ExplosionScale = FVector(2.0f);
 }
 
 // Called when the game starts or when spawned
@@ -42,8 +47,7 @@ void ASTrackerBot::BeginPlay()
 void ASTrackerBot::HandleTakeDamage(USHealthComponent* OwningHealthComp, float Health, float HealthDelta, const UDamageType * DamageType, AController * InstigatedBy, AActor * DamageCauser)
 {
 	// Explode on death
-
-	//@TODO: Pulse the material on hit
+	
 	if (MatInst == nullptr)
 	{
 		MatInst = MeshComp->CreateAndSetMaterialInstanceDynamicFromMaterial(0, MeshComp->GetMaterial(0));
@@ -52,6 +56,11 @@ void ASTrackerBot::HandleTakeDamage(USHealthComponent* OwningHealthComp, float H
 	MatInst->SetScalarParameterValue("LastTimeDamageTaken", GetWorld()->TimeSeconds);
 
 	UE_LOG(LogTemp, Log, TEXT("Health %s of %s"), *FString::SanitizeFloat(Health), *GetName());
+
+	if (Health <= 0)
+	{
+		SelfDestruct();
+	}
 }
 
 FVector ASTrackerBot::GetNextPathPoint()
@@ -73,6 +82,31 @@ FVector ASTrackerBot::GetNextPathPoint()
 	
 	//Failed to find path
 	return GetActorLocation();
+}
+
+
+void ASTrackerBot::SelfDestruct()
+{
+	if (bExploded)
+	{
+		return;
+	}
+
+	bExploded = true;
+
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ExplosionEffect, GetActorLocation(),GetActorRotation(), ExplosionScale);
+
+	TArray<AActor*> IgnoredActors;
+	IgnoredActors.Add(this);
+
+	//Apply Damage!
+	UGameplayStatics::ApplyRadialDamage(this, ExplosionDamage, GetActorLocation(), ExplosionRadius, nullptr, IgnoredActors, this, GetInstigatorController(), true);
+
+	DrawDebugSphere(GetWorld(), GetActorLocation(), ExplosionRadius, 16, FColor::Red, false, 3.0f, 0, 1.0f);
+
+	// Delete Actor immediately
+	Destroy();
+
 }
 
 // Called every frame
