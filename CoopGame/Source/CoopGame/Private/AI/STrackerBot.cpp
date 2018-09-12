@@ -44,6 +44,9 @@ ASTrackerBot::ASTrackerBot()
 	ExplosionRadius = 200.0f;
 	ExplosionScale = FVector(2.0f);
 	SelfDamageInterval = 0.25f;
+
+	PowerLevel = 1;
+	MaxPowerLevel = 4;
 }
 
 // Called when the game starts or when spawned
@@ -86,7 +89,7 @@ FVector ASTrackerBot::GetNextPathPoint()
 //	ACharacter* PlayerPawn = UGameplayStatics::GetPlayerCharacter(this, 0);
 
 	ACharacter* PlayerPawn = nullptr;
-	
+	   	
 	UNavigationPath* NavPath = UNavigationSystemV1::FindPathToActorSynchronously(this, GetActorLocation(), GetWorld()->GetFirstPlayerController()->GetPawn());
 
 	
@@ -179,6 +182,12 @@ void ASTrackerBot::NotifyActorBeginOverlap(AActor * OtherActor)
 {
 	if (!bStartedSelfDestruction && !bExploded)
 	{
+		if (MatInst == nullptr)
+		{
+			MatInst = MeshComp->CreateAndSetMaterialInstanceDynamicFromMaterial(0, MeshComp->GetMaterial(0));
+		}
+		MatInst->SetScalarParameterValue("PowerLevelAlpha", PowerLevel/MaxPowerLevel);
+
 		ASCharacter* PlayerPawn = Cast<ASCharacter>(OtherActor);
 
 		if (PlayerPawn)
@@ -194,7 +203,6 @@ void ASTrackerBot::NotifyActorBeginOverlap(AActor * OtherActor)
 			bStartedSelfDestruction = true;
 
 			UGameplayStatics::SpawnSoundAttached(SelfDestructAlarm, RootComponent);
-
 		}
 	}
 }

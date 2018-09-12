@@ -86,6 +86,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "TrackerBot")
 	float SelfDamageInterval;
 
+	int8 PowerLevel;
+
+	UPROPERTY(EditDefaultsOnly, Category = "TrackerBot")
+	int8 MaxPowerLevel;
+
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
