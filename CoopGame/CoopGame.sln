@@ -10,6 +10,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UE4", "Intermediate\ProjectFiles\UE4.vcxproj", "{C7087E7C-2FD3-4043-80F6-6910A97B8398}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CoopGame", "Intermediate\ProjectFiles\CoopGame.vcxproj", "{8BEA6723-7EF6-4E9C-9390-119C84F8349B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C7087E7C-2FD3-4043-80F6-6910A97B8398} = {C7087E7C-2FD3-4043-80F6-6910A97B8398}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
