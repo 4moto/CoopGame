@@ -33,7 +33,6 @@ protected:
 	UPROPERTY(VisibleDefaultsOnly, Category = "Components")
 	USphereComponent* SphereComp;
 
-
 	UFUNCTION()
 	void HandleTakeDamage(USHealthComponent* OwningHealthComp, float Health, float HealthDelta, const UDamageType * DamageType, AController * InstigatedBy, AActor * DamageCauser);
 
@@ -86,10 +85,17 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "TrackerBot")
 	float SelfDamageInterval;
 
-	int8 PowerLevel;
+	int32 PowerLevel;
 
 	UPROPERTY(EditDefaultsOnly, Category = "TrackerBot")
-	int8 MaxPowerLevel;
+	int32 MaxPowerLevel;
+
+	UFUNCTION()
+	void OnCheckNearbyBots();
+	
+	UPROPERTY(EditDefaultsOnly, Category = "TrackerBot")
+	float Radius;
+	
 
 
 public:	
