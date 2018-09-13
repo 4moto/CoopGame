@@ -36,7 +36,7 @@ ASTrackerBot::ASTrackerBot()
 	SphereComp->SetupAttachment(RootComponent);
 
 
-	MovementForce = 1000.0f;
+	MovementForce = 500.0f;
 	RequiredDistanceToTarget = 100.0f;
 	bUseVelocityChange = true;
 
@@ -56,7 +56,7 @@ void ASTrackerBot::BeginPlay()
 	Super::BeginPlay();
 
 	//Find initial moveto
-	if (Role = ROLE_Authority)
+	if (Role == ROLE_Authority)
 	{
 		FVector NextPoint = GetNextPathPoint();
 
@@ -90,6 +90,7 @@ void ASTrackerBot::HandleTakeDamage(USHealthComponent* OwningHealthComp, float H
 
 FVector ASTrackerBot::GetNextPathPoint()
 {
+/* My old logic below -- below that is Tom Looman's logic which hopefully won't crash the game in network mode...
 	//Hacky cheat that won't hold up in multiplayer
 //	ACharacter* PlayerPawn = UGameplayStatics::GetPlayerCharacter(this, 0);
 
@@ -106,6 +107,50 @@ FVector ASTrackerBot::GetNextPathPoint()
 	
 	
 	//Failed to find path
+	return GetActorLocation();
+*/
+	AActor* BestTarget = nullptr;
+	float NearestTargetDistance = FLT_MAX;
+
+	for (FConstPawnIterator It = GetWorld()->GetPawnIterator(); It; ++It)
+	{
+		
+		APawn* TestPawn = It->Get();
+		/*
+		if (TestPawn == nullptr || USHealthComponent::IsFriendly(TestPawn, this))
+		{
+			continue;
+		}
+		*/
+
+		USHealthComponent* TestPawnHealthComp = Cast<USHealthComponent>(TestPawn->GetComponentByClass(USHealthComponent::StaticClass()));
+		if (TestPawnHealthComp)
+		{
+			float Distance = (TestPawn->GetActorLocation() - GetActorLocation()).Size();
+
+			if (Distance < NearestTargetDistance)
+			{
+				BestTarget = TestPawn;
+				NearestTargetDistance = Distance;
+			}
+		}
+	}
+
+	if (BestTarget)
+	{
+		UNavigationPath* NavPath = UNavigationSystemV1::FindPathToActorSynchronously(this, GetActorLocation(), BestTarget);
+
+		GetWorldTimerManager().ClearTimer(TimerHandle_RefreshPath);
+		GetWorldTimerManager().SetTimer(TimerHandle_RefreshPath, this, &ASTrackerBot::RefreshPath, 5.0f, false);
+
+		if (NavPath && NavPath->PathPoints.Num() > 1)
+		{
+			// Return next point in the path
+			return NavPath->PathPoints[1];
+		}
+	}
+
+	// Failed to find path
 	return GetActorLocation();
 }
 
@@ -262,5 +307,10 @@ void ASTrackerBot::NotifyActorBeginOverlap(AActor * OtherActor)
 			UGameplayStatics::SpawnSoundAttached(SelfDestructAlarm, RootComponent);
 		}
 	}
+}
+
+void ASTrackerBot::RefreshPath()
+{
+	NextPathPoint = GetNextPathPoint();
 }
 

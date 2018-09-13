@@ -74,6 +74,11 @@ protected:
 
 	FTimerHandle TimerHandle_SelfDamage;
 
+	FTimerHandle TimerHandle_RefreshPath;
+
+	UFUNCTION()
+	void RefreshPath();
+
 	void DamageSelf();
 
 	UPROPERTY(EditDefaultsOnly, Category = "SFX")
