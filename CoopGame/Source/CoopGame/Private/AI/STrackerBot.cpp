@@ -11,6 +11,7 @@
 #include "DrawDebugHelpers.h"
 #include "SCharacter.h"
 #include "Sound/SoundCue.h"
+#include "TimerManager.h"
 
 
 // Sets default values
