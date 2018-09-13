@@ -9,6 +9,7 @@ ASPowerupActor::ASPowerupActor()
 {
 	PowerupInterval = 0.0f;
 	TotalNumberOfTicks = 0;
+	TicksHandled = 0;
 }
 
 // Called when the game starts or when spawned
@@ -22,6 +23,8 @@ void ASPowerupActor::OnTickPowerup()
 {
 	OnPowerupTicked();
 
+	TicksHandled++;
+
 	if (TicksHandled >= TotalNumberOfTicks)
 	{
 		OnExpired();
@@ -31,8 +34,6 @@ void ASPowerupActor::OnTickPowerup()
 
 		TicksHandled = 0;
 	}
-	
-	TicksHandled++;
 }
 
 void ASPowerupActor::ActivatePowerup()
@@ -41,7 +42,7 @@ void ASPowerupActor::ActivatePowerup()
 
 	if (PowerupInterval > 0.0f)
 	{
-		GetWorldTimerManager().SetTimer(TimerHandle_PowerupTick, this, &ASPowerupActor::OnTickPowerup, PowerupInterval, true, 0.0f);
+		GetWorldTimerManager().SetTimer(TimerHandle_PowerupTick, this, &ASPowerupActor::OnTickPowerup, PowerupInterval, true, PowerupInterval);
 	}
 	else
 	{
