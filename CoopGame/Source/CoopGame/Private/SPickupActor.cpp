@@ -11,7 +11,7 @@ ASPickupActor::ASPickupActor()
 	SphereComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
 	RootComponent = SphereComp;
 
-	DecalComp = CreateDefaultSubobject<UDecalComponent>(TEXT("SphereComp"));
+	DecalComp = CreateDefaultSubobject<UDecalComponent>(TEXT("DecalComp"));
 	DecalComp->SetupAttachment(RootComponent);
 	
 	
