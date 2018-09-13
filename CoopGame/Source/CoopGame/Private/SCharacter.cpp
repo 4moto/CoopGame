@@ -21,7 +21,7 @@ ASCharacter::ASCharacter()
 	SpringArmComp->SetupAttachment(RootComponent);
 	SpringArmComp->bUsePawnControlRotation = true;
 	SpringArmComp->bEnableCameraLag = true;
-	SpringArmComp->CameraLagSpeed = 10;
+	SpringArmComp->CameraLagSpeed = 15;
 
 	GetMovementComponent()->GetNavAgentPropertiesRef().bCanCrouch = true;
 
@@ -103,7 +103,7 @@ void ASCharacter::BeginZoom()
 void ASCharacter::EndZoom()
 {
 	bWantsToZoom = false;
-	SpringArmComp->CameraLagSpeed = 10;
+	SpringArmComp->CameraLagSpeed = 15;
 }
 
 
