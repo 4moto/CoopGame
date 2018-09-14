@@ -14,7 +14,49 @@ class COOPGAME_API ASGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 	
+protected:
+
+	FTimerHandle TimerHandle_BotSpawner;
+	FTimerHandle TimerHandle_NextWaveDelay;
+
+	// Bots to spawn in current wave
+	int32 NrOfBotsToSpawn;
+
+	// Current Wave #
+	int32 WaveCount;
 	
+	// Time between waves
+	UPROPERTY(EditDefaultsOnly, Category = "GameMode")
+	float TimeBetweenWaves;
+
+protected:
 	
+	// Hook for BP to spawn a single bot
+	UFUNCTION(BlueprintImplementableEvent, Category = "GameMode")
+	void SpawnNewBot();
+
+	UFUNCTION()
+	void SpawnBotTimerElapsed();
+
+	// Start Spawning Bots
+	UFUNCTION()
+	void StartWave();
+
+	// Stop Spawning Bots
+	UFUNCTION()
+	void EndWave();
 	
+	// Set timer for next StartWave
+	UFUNCTION()
+	void PrepareForNextWave();
+
+	UFUNCTION()
+	void CheckWaveState();
+	
+public:
+
+	ASGameMode();
+
+	virtual void StartPlay() override; 
+	virtual void Tick(float DeltaSeconds) override;
 };
