@@ -69,13 +69,22 @@ void ASGameMode::CheckWaveState()
 			continue;
 		}
 
-		/*USHealthComponent* HealthComp = (TestPawn->GetComponentByClass(TSubclassOf<HealthComponent> HealthComp);
-		if (HealthComp && HealthComp->GetHealth() >= 0)
+		TArray<USHealthComponent*> HealthComps;
+
+		TestPawn->GetComponents(HealthComps);
+
+		if (HealthComps.Num() > 0)
 		{
-			bIsAnyBotAlive = true;
-			break;
-		}
-		*/
+			//		USHealthComponent* HealthComp = (Cast<USHealthComponent>(TestPawn->GetComponentByClass(TSubclassOf<USHealthComponent>(HealthComp))); -- couldn't get this working
+			
+			USHealthComponent* HealthComp = HealthComps[0];
+
+			if (HealthComp && HealthComp->GetHealth() <= 0)
+			{
+				bIsAnyBotAlive = true;
+				break;
+			}
+		}		
 	}
 
 	if (!bIsAnyBotAlive)
