@@ -98,7 +98,7 @@ void ASGameMode::StartPlay()
 {
 	Super::StartPlay();
 
-	PrepareForNextWave();
+	PrepareForNextWave(); // this is happening too fast and is causing errors since the world isn't finished loading yet!
 }
 
 void ASGameMode::Tick(float DeltaSeconds)
