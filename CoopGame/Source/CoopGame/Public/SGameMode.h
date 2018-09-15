@@ -4,11 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "SomeEnums.h"
 #include "SGameMode.generated.h"
+
+
 
 /**
  * 
  */
+
 UCLASS()
 class COOPGAME_API ASGameMode : public AGameModeBase
 {
@@ -58,6 +62,9 @@ protected:
 
 	UFUNCTION()
 	void GameOver();
+
+	UFUNCTION()
+	void SetWaveState(EWaveState NewState);
 	
 public:
 
