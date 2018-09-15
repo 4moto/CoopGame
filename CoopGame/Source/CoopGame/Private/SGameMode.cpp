@@ -57,7 +57,7 @@ void ASGameMode::EndWave()
 
 void ASGameMode::PrepareForNextWave()
 {
-	SetWaveState(EWaveState::WaitingtoStart);
+	SetWaveState(EWaveState::WaitingToStart);
 
 	RespawnDeadPlayers();
 

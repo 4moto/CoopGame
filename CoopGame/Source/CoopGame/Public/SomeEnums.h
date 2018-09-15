@@ -5,7 +5,7 @@ UENUM(BlueprintType)
 enum class EWaveState : uint8
 {
 	// Delay between waves
-	WaitingtoStart,
+	WaitingToStart,
 
 	// Spawning new bots
 	WaveInProgress,
