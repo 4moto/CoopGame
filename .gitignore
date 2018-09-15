@@ -15,6 +15,7 @@ Build/*/**
 
 # Built data for maps
 *_BuiltData.uasset
+*.suo
 
 ####################
 #VS Generated Files#
