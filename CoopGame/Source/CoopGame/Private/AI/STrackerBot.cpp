@@ -110,6 +110,8 @@ FVector ASTrackerBot::GetNextPathPoint()
 	//Failed to find path
 	return GetActorLocation();
 */
+	ACharacter* PlayerPawn = UGameplayStatics::GetPlayerCharacter(this, 0);
+
 	AActor* BestTarget = nullptr;
 	float NearestTargetDistance = FLT_MAX;
 
