@@ -66,7 +66,6 @@ protected:
 	UFUNCTION()
 	void SetWaveState(EWaveState NewState);
 
-	UFUNCTION()
 	void RespawnDeadPlayers();
 	
 public:

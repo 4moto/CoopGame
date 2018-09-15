@@ -56,9 +56,6 @@ protected:
 	void BeginZoom();
 	void EndZoom();
 
-	void StartFire();
-	void StopFire();
-
 	UPROPERTY(Replicated)
 	ASWeapon* CurrentWeapon;
 
@@ -71,10 +68,6 @@ protected:
 	UFUNCTION()
 	void OnHealthChanged(USHealthComponent* OwningHealthComp, float Health, float HealthDelta, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
 
-	/* Pawn Died Previously */
-	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Player")
-	bool bDied;
-
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -83,5 +76,14 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	virtual FVector GetPawnViewLocation() const override;
+
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		void StartFire();
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		void StopFire();
 	
+	/* Pawn Died Previously */
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Player")
+		bool bDied;
+
 };
