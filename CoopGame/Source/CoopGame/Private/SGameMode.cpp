@@ -69,28 +69,96 @@ void ASGameMode::CheckWaveState()
 			continue;
 		}
 
+		USHealthComponent* HealthComp = (Cast<USHealthComponent>(TestPawn->GetComponentByClass(USHealthComponent::StaticClass())));
+		if (HealthComp && HealthComp->GetHealth() > 0.0f)
+		{
+			bIsAnyBotAlive = true;
+			break;
+		}
+
+
+		/* Alternative
 		TArray<USHealthComponent*> HealthComps;
-
 		TestPawn->GetComponents(HealthComps);
-
 		if (HealthComps.Num() > 0)
 		{
-			//		USHealthComponent* HealthComp = (Cast<USHealthComponent>(TestPawn->GetComponentByClass(TSubclassOf<USHealthComponent>(HealthComp))); -- couldn't get this working
-			
+			//		USHealthComponent* HealthComp = (Cast<USHealthComponent>(TestPawn->GetComponentByClass(TSubclassOf<USHealthComponent>(HealthCompe))); -- got this working above
 			USHealthComponent* HealthComp = HealthComps[0];
-
 			if (HealthComp && HealthComp->GetHealth() <= 0)
 			{
 				bIsAnyBotAlive = true;
 				break;
 			}
-		}		
+		}
+		*/
 	}
 
 	if (!bIsAnyBotAlive)
 	{
 		PrepareForNextWave();
 	}
+}
+
+void ASGameMode::CheckAnyPlayerAlive()
+{
+	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+	{
+		APlayerController* PC = It->Get();
+		if (PC && PC->GetPawn())
+		{
+			APawn* MyPawn = PC->GetPawn();
+			USHealthComponent* HealthComp = Cast<USHealthComponent>(MyPawn->GetComponentByClass(USHealthComponent::StaticClass()));
+			if (ensure(HealthComp) && HealthComp->GetHealth() > 0.0f)
+			{
+				// A player is still alive
+				return;
+			}
+		}
+	}
+	
+	// No player alive
+	GameOver();
+
+
+	/* Alternative Method
+	bool bIsAnyPlayerAlive = false;
+
+
+	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+	{
+		APlayerController* PC = It->Get();
+		if (PC && PC->GetPawn())
+		{
+			APawn* MyPawn = PC->GetPawn();
+		}
+
+		TArray<USHealthComponent*> HealthComps;
+
+		PC->GetComponents(HealthComps);
+
+		if (HealthComps.Num() > 0)
+		{
+			//		USHealthComponent* HealthComp = (Cast<USHealthComponent>(TestPawn->GetComponentByClass(TSubclassOf<USHealthComponent>(HealthComp))); -- couldn't get this working
+
+			USHealthComponent* HealthComp = HealthComps[0];
+
+			if (HealthComp && HealthComp->GetHealth() <= 0)
+			{
+				bIsAnyPlayerAlive = true;
+				break;
+			}
+		}
+		*/
+}
+
+void ASGameMode::GameOver()
+{
+	EndWave();
+
+	// @TODO: Finish up the match, present 'game over' to players
+
+	UE_LOG(LogTemp, Log, TEXT("Game Over! Players are dead"));
+
 }
 
 
@@ -106,5 +174,7 @@ void ASGameMode::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 	
 	CheckWaveState();
+
+	CheckAnyPlayerAlive();
 
 }

@@ -52,6 +52,12 @@ protected:
 
 	UFUNCTION()
 	void CheckWaveState();
+
+	UFUNCTION()
+	void CheckAnyPlayerAlive();
+
+	UFUNCTION()
+	void GameOver();
 	
 public:
 
