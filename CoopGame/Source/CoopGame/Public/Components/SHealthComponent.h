@@ -34,6 +34,8 @@ protected:
 	UFUNCTION()
 	void OnRep_Health(float OldHealth);
 
+	bool bIsDead;
+
 public:	
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
@@ -43,6 +45,6 @@ public:
 	void Heal(float HealAmount);
 
 	UFUNCTION()
-		float GetHealth() const;
+	float GetHealth() const;
 	
 };
