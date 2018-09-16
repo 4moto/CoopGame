@@ -18,7 +18,7 @@ static int32 DebugWeaponDrawing = 0;
 FAutoConsoleVariableRef CVARDebugWeapondDrawing(
 	TEXT("COOP.DebugWeapons"),
 	DebugWeaponDrawing,
-	TEXT("Draw Debug Lines for Weapons"),
+	TEXT("Draw Debug Lines for Weapons 1 for lines, 2 for hits"),
 	ECVF_Cheat);
 
 
@@ -33,6 +33,8 @@ ASWeapon::ASWeapon()
 	BaseDamage = 20.0f;
 	RateOfFire = 600; //Bullets Per Minute
 	BulletSpread = 0.0f;
+	NumberOfBulletsPerShot = 1;
+	ShotsFired = 0;
 
 	RecoilMod = 1.0f;
 	
@@ -55,7 +57,10 @@ void ASWeapon::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// Bullet Spread
+	// @TODO Either here or in SCharacter - when moving add to or multiply BulletSpread by a number and feed it in when speed > value 
+	// Get speed with FVector Speed = MyOwner->GetVelocity();
+
+	// Bullet Spread 
 	HalfRad = FMath::DegreesToRadians(BulletSpread);
 	AI_HalfRad = FMath::DegreesToRadians(AI_BulletSpread);
 
@@ -119,7 +124,7 @@ void ASWeapon::Fire()
 			float ActualDamage = BaseDamage;
 			if (SurfaceType == SURFACE_FLESHVULNERABLE)
 			{
-				ActualDamage *= 4.0f;
+				ActualDamage *= CritMultiplier;
 			}
 
 			/* Using MyOwner instead of this SWeapon as damage causer to get it to work with friendly fire in SHealthComponent -- may need to be revisited */
@@ -132,9 +137,15 @@ void ASWeapon::Fire()
 //Not sure where this came from			HitScanTrace.SurfaceType = SurfaceType;
 		}
 
-		if (DebugWeaponDrawing > 0)
+		if (DebugWeaponDrawing == 1)
 		{
 			DrawDebugLine(GetWorld(), EyeLocation, TraceEnd, FColor::White, false, 1.0f, 0, 1.0f);
+			DrawDebugSphere(GetWorld(), TracerEndPoint, 4.0f, 12, FColor::Yellow, false, 3.0f, 0, 1.0f);
+		}
+
+		if (DebugWeaponDrawing > 0)
+		{
+			DrawDebugSphere(GetWorld(), TracerEndPoint, 4.0f, 12, FColor::Red, false, 3.0f, 0, 1.0f);
 		}
 
 		PlayFireEffect(TracerEndPoint);
@@ -149,6 +160,20 @@ void ASWeapon::Fire()
 
 		LastFireTime = GetWorld()->TimeSeconds;
 	}
+	
+	ShotsFired++;
+
+	UE_LOG(LogTemp, Log, TEXT("BulletsFired: %s of %s"), *FString::SanitizeFloat(ShotsFired), *FString::SanitizeFloat(NumberOfBulletsPerShot));
+
+	if (NumberOfBulletsPerShot > ShotsFired)
+	{
+		Fire();
+	}
+	else
+	{
+		ShotsFired = 0;
+	}
+
 }
 
 
