@@ -32,8 +32,8 @@ ASWeapon::ASWeapon()
 	TracerTargetName = "Target";
 	BaseDamage = 20.0f;
 	RateOfFire = 600; //Bullets Per Minute
-	AI_BulletSpread = 2.0f;
-	AI_DamageMod = 1.0f;
+	AI_BulletSpread = 5.0f;
+	AI_DamageMod = 0.5f;
 
 	// Bullet Spread
 	HalfRad = FMath::DegreesToRadians(AI_BulletSpread);
