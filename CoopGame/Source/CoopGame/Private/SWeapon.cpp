@@ -34,6 +34,13 @@ ASWeapon::ASWeapon()
 	RateOfFire = 600; //Bullets Per Minute
 	BulletSpread = 0.0f;
 
+	RecoilMod = 1.0f;
+	
+	RecoilPitchUp = 0.5f;	
+	RecoilPitchDown = 0.1f;	
+	RecoilYawLeft = 0.05f;	
+	RecoilYawRight = 0.25f;
+
 	AI_BulletSpread = 5.0f;
 	AI_BaseDamage = 10.0f;
 
@@ -96,7 +103,7 @@ void ASWeapon::Fire()
 		QueryParams.bTraceComplex = true;
 		QueryParams.bReturnPhysicalMaterial = true;
 
-		//Particle "Target" parameter
+		//Particle FX "Target" parameter
 		FVector TracerEndPoint = TraceEnd;
 
 		EPhysicalSurface SurfaceType = SurfaceType_Default;
@@ -122,7 +129,6 @@ void ASWeapon::Fire()
 
 			//Updates the particle "target" with the hit result
 			TracerEndPoint = Hit.ImpactPoint;
-
 //Not sure where this came from			HitScanTrace.SurfaceType = SurfaceType;
 		}
 
@@ -138,6 +144,8 @@ void ASWeapon::Fire()
 			HitScanTrace.TraceTo = TracerEndPoint;
 			HitScanTrace.SurfaceType = SurfaceType;
 		}
+
+		Recoil(PC);
 
 		LastFireTime = GetWorld()->TimeSeconds;
 	}
@@ -159,6 +167,26 @@ void ASWeapon::StartFire()
 void ASWeapon::StopFire()
 {
 	GetWorldTimerManager().ClearTimer(TimerHandle_TimeBetweenShots);
+}
+
+void ASWeapon::Recoil(APlayerController* PC)
+{
+	FinalRecoilPitch = FMath::FRandRange(RecoilPitchDown, -RecoilPitchUp) * RecoilMod;
+	FinalRecoilYaw = FMath::FRandRange(-RecoilYawLeft, RecoilYawRight) * RecoilMod;
+
+	// Make sure this is player controlled
+	if (PC)
+	{
+		PC->AddPitchInput(FinalRecoilPitch);
+		PC->AddYawInput(FinalRecoilYaw);
+	}
+}
+
+void ASWeapon::SetRecoilMod(float RecoilModifier)
+{
+	RecoilMod += RecoilModifier;
+
+//	RecoilMod = FMath::Clamp(RecoilMod, 0, 3); -- clamped the variable in header instead should work
 }
 
 void ASWeapon::ServerFire_Implementation()

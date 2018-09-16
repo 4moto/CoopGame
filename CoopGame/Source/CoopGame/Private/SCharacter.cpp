@@ -97,6 +97,11 @@ void ASCharacter::BeginZoom()
 {
 	bWantsToZoom = true;
 	SpringArmComp->CameraLagSpeed = 20;
+
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->SetRecoilMod(-0.5f);
+	}
 }
 
 
@@ -104,6 +109,11 @@ void ASCharacter::EndZoom()
 {
 	bWantsToZoom = false;
 	SpringArmComp->CameraLagSpeed = 15;
+
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->SetRecoilMod(0.5f);
+	}
 }
 
 

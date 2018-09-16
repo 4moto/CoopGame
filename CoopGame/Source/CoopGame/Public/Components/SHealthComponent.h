@@ -31,6 +31,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HealthComponent")
 	float DefaultHealth;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HealthComponent")
+	bool bIsInvulnerable;
+
 	UFUNCTION()
 	void HandleTakeAnyDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
 

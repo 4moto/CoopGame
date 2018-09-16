@@ -51,7 +51,7 @@ void ASGameMode::EndWave()
 	SetWaveState(EWaveState::WaitingToComplete);
 
 // if using a timer to spawn instead of just dead robots
-	PrepareForNextWave();
+//	PrepareForNextWave();
 }
 
 

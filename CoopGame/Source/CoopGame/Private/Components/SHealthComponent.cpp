@@ -12,6 +12,7 @@ USHealthComponent::USHealthComponent()
 {
 	DefaultHealth = 100.0f;
 	bIsDead = false;
+	bIsInvulnerable = false;
 
 	TeamNum = 255;
 
@@ -38,7 +39,7 @@ void USHealthComponent::BeginPlay()
 
 void USHealthComponent::HandleTakeAnyDamage(AActor * DamagedActor, float Damage, const UDamageType * DamageType, AController * InstigatedBy, AActor * DamageCauser)
 {
-	if (Damage <= 0.0f || bIsDead)
+	if (Damage <= 0.0f || bIsDead || bIsInvulnerable)
 	{
 		return;
 	}
@@ -108,8 +109,8 @@ bool USHealthComponent::IsFriendly(AActor* ActorA, AActor* ActorB)
 
 	if (HealthCompA == nullptr || HealthCompB == nullptr)
 	{
-		// Assume friendly
-		return true;
+		// Assume not friendly - unassigned health components can damage each other
+		return false;
 	}
 
 	return HealthCompA->TeamNum == HealthCompB->TeamNum;

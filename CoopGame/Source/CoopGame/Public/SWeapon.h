@@ -70,7 +70,7 @@ protected:
 		float BaseDamage;
 
 	/* Bullet Spread in degrees */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", meta = (ClampMin = 0.0))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Recoil", meta = (ClampMin = 0.0))
 		float BulletSpread;
 
 	// Bullet Spread in radians
@@ -93,7 +93,7 @@ protected:
 		float AI_BaseDamage;
 
 	/* Bullet Spread in degrees */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", meta = (ClampMin = 0.0))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Recoil", meta = (ClampMin = 0.0))
 		float AI_BulletSpread;
 
 	UFUNCTION(Server, Reliable, WithValidation)
@@ -109,10 +109,36 @@ protected:
 	UFUNCTION()
 		void OnRep_HitScanTrace();
 
+// Recoil
+//	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+//		float RecoilRate;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Recoil")
+		float RecoilPitchUp;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Recoil")
+		float RecoilPitchDown;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Recoil")
+		float RecoilYawLeft;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Recoil")
+		float RecoilYawRight;
+
+	UPROPERTY(meta = (ClampMin = 0.0, ClampMax = 3.0))
+	float RecoilMod;
+
+	float FinalRecoilPitch;
+	float FinalRecoilYaw;
+//	float FinalRecoilYawDirection;
+
+
 public:	
 
 	virtual void Fire();
 	virtual void StartFire();
 	virtual void StopFire();
+
+	virtual void Recoil(APlayerController* PC);
+	
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	void SetRecoilMod(float RecoilModifier);
 	
 };
