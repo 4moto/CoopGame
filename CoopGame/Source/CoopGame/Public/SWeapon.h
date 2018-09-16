@@ -69,6 +69,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 		float BaseDamage;
 
+	/* Bullet Spread in degrees */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", meta = (ClampMin = 0.0))
+		float BulletSpread;
+
 	// Bullet Spread in radians
 	float HalfRad;
 
