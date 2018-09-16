@@ -38,6 +38,9 @@ ASWeapon::ASWeapon()
 	// Bullet Spread
 	HalfRad = FMath::DegreesToRadians(AI_BulletSpread);
 
+	// AI Damage mod
+	BaseDamage *= AI_DamageMod;
+
 	SetReplicates(true);
 
 	NetUpdateFrequency = 66.0f;
@@ -74,11 +77,10 @@ void ASWeapon::Fire()
 		// Checks if controlled by a player
 		APlayerController* PC = Cast<APlayerController>(MyOwner->GetInstigatorController());
 
-		// Add bullet spread and damage mod if AI
+		// Add bullet spread if AI
 		if (PC == nullptr)
 		{
 			ShotDirection = FMath::VRandCone(ShotDirection, HalfRad, HalfRad);
-			BaseDamage *= AI_DamageMod;
 		}
 
 		FVector TraceEnd = EyeLocation + (ShotDirection * 10000);
