@@ -69,6 +69,16 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 		float BaseDamage;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", meta = (ClampMin = 0.0))
+		float AI_DamageMod;
+
+	/* Bullet Spread in degrees */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", meta = (ClampMin=0.0))
+		float AI_BulletSpread;
+
+	// Bullet Spread in radians
+	float HalfRad;
+
 	FTimerHandle TimerHandle_TimeBetweenShots;
 
 	float LastFireTime;
