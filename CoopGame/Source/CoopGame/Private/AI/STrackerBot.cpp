@@ -13,7 +13,7 @@
 #include "Sound/SoundCue.h"
 #include "TimerManager.h"
 
-static int32 DebugTrackerBotDrawing = 1;
+static int32 DebugTrackerBotDrawing = 0;
 FAutoConsoleVariableRef CVARDebugTrackerBotDrawing(
 	TEXT("COOP.DebugTrackerBot"),
 	DebugTrackerBotDrawing,
@@ -98,25 +98,6 @@ void ASTrackerBot::HandleTakeDamage(USHealthComponent* OwningHealthComp, float H
 
 FVector ASTrackerBot::GetNextPathPoint()
 {
-/* My old logic below -- below that is Tom Looman's logic which hopefully won't crash the game in network mode...
-	//Hacky cheat that won't hold up in multiplayer
-//	ACharacter* PlayerPawn = UGameplayStatics::GetPlayerCharacter(this, 0);
-
-	ACharacter* PlayerPawn = nullptr;
-	   	
-	UNavigationPath* NavPath = UNavigationSystemV1::FindPathToActorSynchronously(this, GetActorLocation(), GetWorld()->GetFirstPlayerController()->GetPawn());
-
-	
-	if (NavPath->PathPoints.Num() > 1)
-	{
-		// Return the next point in the path
-		return NavPath->PathPoints[1];
-	}
-	
-	
-	//Failed to find path
-	return GetActorLocation();
-*/
 	AActor* BestTarget = nullptr;
 	float NearestTargetDistance = FLT_MAX;
 
@@ -285,7 +266,10 @@ void ASTrackerBot::Tick(float DeltaTime)
 		{
 			NextPathPoint = GetNextPathPoint();
 
-			DrawDebugString(GetWorld(), GetActorLocation(), "Target Reached");
+			if (DebugTrackerBotDrawing)
+			{
+				DrawDebugString(GetWorld(), GetActorLocation(), "Target Reached");
+			}
 		}
 		else
 		{
@@ -296,8 +280,11 @@ void ASTrackerBot::Tick(float DeltaTime)
 			ForceDirection *= MovementForce;
 
 			MeshComp->AddForce(ForceDirection, NAME_None, bUseVelocityChange);
-
-			DrawDebugDirectionalArrow(GetWorld(), GetActorLocation(), GetActorLocation() + ForceDirection, 32, FColor::Yellow, false, 0.0, 0, 1.0f);
+			
+			if (DebugTrackerBotDrawing)
+			{
+				DrawDebugDirectionalArrow(GetWorld(), GetActorLocation(), GetActorLocation() + ForceDirection, 32, FColor::Yellow, false, 0.0, 0, 1.0f);
+			}
 		}
 
 		if (DebugTrackerBotDrawing)
