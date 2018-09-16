@@ -32,16 +32,10 @@ ASWeapon::ASWeapon()
 	TracerTargetName = "Target";
 	BaseDamage = 20.0f;
 	RateOfFire = 600; //Bullets Per Minute
-	BulletSpread = 1.0f;
+	BulletSpread = 0.0f;
 
 	AI_BulletSpread = 5.0f;
-	AI_DamageMod = 0.5f;
-
-	// Bullet Spread
-	HalfRad = FMath::DegreesToRadians(AI_BulletSpread);
-
-	// AI Damage mod
-	BaseDamage *= AI_DamageMod;
+	AI_BaseDamage = 10.0f;
 
 	SetReplicates(true);
 
@@ -53,7 +47,11 @@ ASWeapon::ASWeapon()
 void ASWeapon::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	// Bullet Spread
+	HalfRad = FMath::DegreesToRadians(BulletSpread);
+	AI_HalfRad = FMath::DegreesToRadians(AI_BulletSpread);
+
 	TimeBetweenShots = 60 / RateOfFire;
 }
 
@@ -76,8 +74,19 @@ void ASWeapon::Fire()
 
 		FVector ShotDirection = EyeRotation.Vector();
 
-		// Add bullet spread
-		ShotDirection = FMath::VRandCone(ShotDirection, HalfRad, HalfRad);
+		// Checks if controlled by a player
+		APlayerController* PC = Cast<APlayerController>(MyOwner->GetInstigatorController());
+
+		// Add bullet spread if AI
+		if (PC == nullptr)
+		{
+			ShotDirection = FMath::VRandCone(ShotDirection, AI_HalfRad, AI_HalfRad);
+			BaseDamage = AI_BaseDamage;
+		}
+		else
+		{
+			ShotDirection = FMath::VRandCone(ShotDirection, HalfRad, HalfRad);
+		}
 
 		FVector TraceEnd = EyeLocation + (ShotDirection * 10000);
 

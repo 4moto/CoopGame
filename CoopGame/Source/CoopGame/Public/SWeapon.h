@@ -75,6 +75,7 @@ protected:
 
 	// Bullet Spread in radians
 	float HalfRad;
+	float AI_HalfRad;
 
 	FTimerHandle TimerHandle_TimeBetweenShots;
 
@@ -89,7 +90,7 @@ protected:
 
 	/* Mulitplier for AI Damage */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", meta = (ClampMin = 0.0))
-		float AI_DamageMod;
+		float AI_BaseDamage;
 
 	/* Bullet Spread in degrees */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon", meta = (ClampMin = 0.0))
