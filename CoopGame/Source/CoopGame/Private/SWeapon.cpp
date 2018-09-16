@@ -103,7 +103,7 @@ void ASWeapon::Fire()
 		QueryParams.bTraceComplex = true;
 		QueryParams.bReturnPhysicalMaterial = true;
 
-		//Particle FX "Target" parameter
+		//Particle FX "Target" parameter -- pretty sure there's no reason for this and TraceEnd can just be used instead
 		FVector TracerEndPoint = TraceEnd;
 
 		EPhysicalSurface SurfaceType = SurfaceType_Default;
