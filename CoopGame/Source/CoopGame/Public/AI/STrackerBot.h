@@ -100,8 +100,6 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, Category = "TrackerBot")
 	float Radius;
-	
-
 
 public:	
 	// Called every frame

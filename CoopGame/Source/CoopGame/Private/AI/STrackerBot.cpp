@@ -13,6 +13,12 @@
 #include "Sound/SoundCue.h"
 #include "TimerManager.h"
 
+static int32 DebugTrackerBotDrawing = 1;
+FAutoConsoleVariableRef CVARDebugTrackerBotDrawing(
+	TEXT("COOP.DebugTrackerBot"),
+	DebugTrackerBotDrawing,
+	TEXT("Draw Debug Lines for Tracker Bot"),
+	ECVF_Cheat);
 
 // Sets default values
 ASTrackerBot::ASTrackerBot()
@@ -49,6 +55,7 @@ ASTrackerBot::ASTrackerBot()
 	PowerLevel = 0;
 	MaxPowerLevel = 4;
 	Radius = 600;
+
 }
 
 // Called when the game starts or when spawned
@@ -78,9 +85,9 @@ void ASTrackerBot::HandleTakeDamage(USHealthComponent* OwningHealthComp, float H
 		MatInst = MeshComp->CreateAndSetMaterialInstanceDynamicFromMaterial(0, MeshComp->GetMaterial(0));
 	}
 
-	MatInst->SetScalarParameterValue("LastTimeDamageTaken", GetWorld()->TimeSeconds);
+	UE_LOG(LogTemp, Log, TEXT("HealthChanged: %s of %s"), *FString::SanitizeFloat(Health),*GetName());
 
-	UE_LOG(LogTemp, Log, TEXT("Health %s of %s"), *FString::SanitizeFloat(Health), *GetName());
+	MatInst->SetScalarParameterValue("LastTimeDamageTaken", GetWorld()->TimeSeconds);
 
 	if (Health <= 0)
 	{
@@ -110,8 +117,6 @@ FVector ASTrackerBot::GetNextPathPoint()
 	//Failed to find path
 	return GetActorLocation();
 */
-	ACharacter* PlayerPawn = UGameplayStatics::GetPlayerCharacter(this, 0);
-
 	AActor* BestTarget = nullptr;
 	float NearestTargetDistance = FLT_MAX;
 
@@ -119,15 +124,15 @@ FVector ASTrackerBot::GetNextPathPoint()
 	{
 		
 		APawn* TestPawn = It->Get();
-		/*
+		
 		if (TestPawn == nullptr || USHealthComponent::IsFriendly(TestPawn, this))
 		{
 			continue;
 		}
-		*/
+		
 
 		USHealthComponent* TestPawnHealthComp = Cast<USHealthComponent>(TestPawn->GetComponentByClass(USHealthComponent::StaticClass()));
-		if (TestPawnHealthComp)
+		if (TestPawnHealthComp && TestPawnHealthComp->GetHealth() > 0.0f)
 		{
 			float Distance = (TestPawn->GetActorLocation() - GetActorLocation()).Size();
 
@@ -189,7 +194,11 @@ void ASTrackerBot::SelfDestruct()
 		//Apply Damage!
 		UGameplayStatics::ApplyRadialDamage(this, ActualDamage, GetActorLocation(), ActualExplosionRadius, nullptr, IgnoredActors, this, GetInstigatorController(), true);
 
-		DrawDebugSphere(GetWorld(), GetActorLocation(), ActualExplosionRadius, 16, FColor::Red, false, 3.0f, 0, 1.0f);
+
+		if (DebugTrackerBotDrawing)
+		{
+			DrawDebugSphere(GetWorld(), GetActorLocation(), ActualExplosionRadius, 16, FColor::Red, false, 3.0f, 0, 1.0f);
+		}
 
 		// Delete Actor after timer (so time to spawn effect on client
 		SetLifeSpan(2.0f);
@@ -218,7 +227,10 @@ void ASTrackerBot::OnCheckNearbyBots()
 	TArray<FOverlapResult> Overlaps;
 	GetWorld()->OverlapMultiByObjectType(Overlaps, GetActorLocation(), FQuat::Identity, QueryParams, CollShape);
 
-	DrawDebugSphere(GetWorld(), GetActorLocation(), Radius, 12, FColor::White, false, 1.0f);
+	if (DebugTrackerBotDrawing)
+	{
+		DrawDebugSphere(GetWorld(), GetActorLocation(), Radius, 12, FColor::White, false, 1.0f);
+	}
 
 	int32 NrOfBots = 0;
 	// loop over the results using a "range based for loop"
@@ -252,8 +264,12 @@ void ASTrackerBot::OnCheckNearbyBots()
 
 		MatInst->SetScalarParameterValue("PowerLevelAlpha", Alpha);
 	}
-	//Draw on the bot location
-	DrawDebugString(GetWorld(), FVector(0, 0, 0), FString::FromInt(PowerLevel), this, FColor::White, 1.0f, true);
+
+	if (DebugTrackerBotDrawing)
+	{
+		//Draw on the bot location
+		DrawDebugString(GetWorld(), FVector(0, 0, 0), FString::FromInt(PowerLevel), this, FColor::White, 1.0f, true);
+	}
 }
 
 // Called every frame
@@ -284,7 +300,10 @@ void ASTrackerBot::Tick(float DeltaTime)
 			DrawDebugDirectionalArrow(GetWorld(), GetActorLocation(), GetActorLocation() + ForceDirection, 32, FColor::Yellow, false, 0.0, 0, 1.0f);
 		}
 
-		DrawDebugSphere(GetWorld(), NextPathPoint, 20, 12, FColor::Yellow, false, 0, 1.0f);
+		if (DebugTrackerBotDrawing)
+		{
+			DrawDebugSphere(GetWorld(), NextPathPoint, 20, 12, FColor::Yellow, false, 0, 1.0f);
+		}
 	}
 }
 
@@ -297,7 +316,7 @@ void ASTrackerBot::NotifyActorBeginOverlap(AActor * OtherActor)
 	{
 		ASCharacter* PlayerPawn = Cast<ASCharacter>(OtherActor);
 
-		if (PlayerPawn)
+		if (PlayerPawn && !USHealthComponent::IsFriendly(OtherActor, this))
 		{
 			// We overlapped with a player!
 
