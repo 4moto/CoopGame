@@ -115,7 +115,8 @@ void ASWeapon::Fire()
 				ActualDamage *= 4.0f;
 			}
 
-			UGameplayStatics::ApplyPointDamage(HitActor, ActualDamage, ShotDirection, Hit, MyOwner->GetInstigatorController(), this, DamageType);
+			/* Using MyOwner instead of this SWeapon as damage causer to get it to work with friendly fire in SHealthComponent -- may need to be revisited */
+			UGameplayStatics::ApplyPointDamage(HitActor, ActualDamage, ShotDirection, Hit, MyOwner->GetInstigatorController(), MyOwner, DamageType);
 
 			PlayImpactEffect(SurfaceType, Hit.ImpactPoint);
 
