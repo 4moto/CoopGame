@@ -12,6 +12,7 @@
 #include "Public/TimerManager.h"
 #include "Engine/World.h"
 #include "Net/UnrealNetwork.h"
+#include "SCharacter.h"
 
 
 static int32 DebugWeaponDrawing = 0;
@@ -37,6 +38,7 @@ ASWeapon::ASWeapon()
 	ShotsFired = 0;
 
 	RecoilMod = 1.0f;
+	AimingSpreadMod = 0.33f;
 	
 	RecoilPitchUp = 0.5f;	
 	RecoilPitchDown = 0.1f;	
@@ -80,6 +82,8 @@ void ASWeapon::Fire()
 	AActor* MyOwner = GetOwner();
 	if (MyOwner)
 	{
+		ASCharacter* RecoilingCharacter = Cast<ASCharacter>(MyOwner);
+
 		FVector EyeLocation;
 		FRotator EyeRotation;
 		MyOwner->GetActorEyesViewPoint(EyeLocation, EyeRotation);
@@ -97,7 +101,14 @@ void ASWeapon::Fire()
 		}
 		else
 		{
-			ShotDirection = FMath::VRandCone(ShotDirection, HalfRad, HalfRad);
+			if (RecoilingCharacter->bWantsToZoom)
+			{
+				HalfRad *= AimingSpreadMod;
+			}
+			else
+			{
+				ShotDirection = FMath::VRandCone(ShotDirection, HalfRad, HalfRad);
+			}
 		}
 
 		FVector TraceEnd = EyeLocation + (ShotDirection * 10000);
@@ -155,9 +166,13 @@ void ASWeapon::Fire()
 			HitScanTrace.TraceTo = TracerEndPoint;
 			HitScanTrace.SurfaceType = SurfaceType;
 		}
-
-		Recoil(PC);
-
+		
+		// Apply Weapon recoil
+		if (RecoilingCharacter)
+		{
+			RecoilingCharacter->Recoil(RecoilPitchUp, RecoilPitchDown, RecoilYawRight, RecoilYawRight);
+		}
+			
 		LastFireTime = GetWorld()->TimeSeconds;
 	}
 	
@@ -194,25 +209,6 @@ void ASWeapon::StopFire()
 	GetWorldTimerManager().ClearTimer(TimerHandle_TimeBetweenShots);
 }
 
-void ASWeapon::Recoil(APlayerController* PC)
-{
-	FinalRecoilPitch = FMath::FRandRange(RecoilPitchDown, -RecoilPitchUp) * RecoilMod;
-	FinalRecoilYaw = FMath::FRandRange(-RecoilYawLeft, RecoilYawRight) * RecoilMod;
-
-	// Make sure this is player controlled
-	if (PC)
-	{
-		PC->AddPitchInput(FinalRecoilPitch);
-		PC->AddYawInput(FinalRecoilYaw);
-	}
-}
-
-void ASWeapon::SetRecoilMod(float RecoilModifier)
-{
-	RecoilMod += RecoilModifier;
-
-//	RecoilMod = FMath::Clamp(RecoilMod, 0, 3); -- clamped the variable in header instead should work
-}
 
 void ASWeapon::ServerFire_Implementation()
 {

@@ -117,8 +117,6 @@ protected:
 		void OnRep_HitScanTrace();
 
 // Recoil
-//	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
-//		float RecoilRate;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Recoil")
 		float RecoilPitchUp;
@@ -131,9 +129,10 @@ protected:
 
 	UPROPERTY(meta = (ClampMin = 0.0, ClampMax = 3.0))
 	float RecoilMod;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Recoil")
+	float AimingSpreadMod;
 
-	float FinalRecoilPitch;
-	float FinalRecoilYaw;
 //	float FinalRecoilYawDirection;
 
 
@@ -142,10 +141,5 @@ public:
 	virtual void Fire();
 	virtual void StartFire();
 	virtual void StopFire();
-
-	virtual void Recoil(APlayerController* PC);
-	
-	UFUNCTION(BlueprintCallable, Category = "Weapon")
-	void SetRecoilMod(float RecoilModifier);
 	
 };

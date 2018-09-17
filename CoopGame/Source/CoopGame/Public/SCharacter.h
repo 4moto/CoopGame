@@ -42,8 +42,6 @@ protected:
 
 	void EndCrouch();
 
-	bool bWantsToZoom;
-
 	UPROPERTY(EditDefaultsOnly, Category = "Player")
 	float ZoomedFOV;
 
@@ -68,6 +66,29 @@ protected:
 	UFUNCTION()
 	void OnHealthChanged(USHealthComponent* OwningHealthComp, float Health, float HealthDelta, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
 
+	bool bIsRecoiling;
+	float RecoilMod;
+	float FinalRecoilPitch;
+	float FinalRecoilYaw;
+
+	// The higher the number the slower the recoil effect is
+	float RecoilTime;
+
+	// The interval between recoil 'kicks' -- very low is smoothest -- higher is most performant
+	UPROPERTY(meta = (ClampMin = 0.0001f, ClampMax = 0.5f))
+	float RecoilApplyRate;
+
+	// How quickly the recoil is reduced out
+	float RecoilDamping;
+	
+
+	UFUNCTION() // not sure I need this one with the way I'm implementing recoil
+	void StopRecoiling();
+
+	UFUNCTION()
+	void StartRecoiling(float RecoilPitch, float RecoilYaw);
+
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -77,6 +98,8 @@ public:
 
 	virtual FVector GetPawnViewLocation() const override;
 
+	bool bWantsToZoom;
+
 	UFUNCTION(BlueprintCallable, Category = "Player")
 		void StartFire();
 	UFUNCTION(BlueprintCallable, Category = "Player")
@@ -85,5 +108,12 @@ public:
 	/* Pawn Died Previously */
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Player")
 		bool bDied;
+	
+	/* Camera Recoil */
+	UFUNCTION(BlueprintCallable, Category = "Player")
+	void Recoil(float RecoilPitchUp, float RecoilPitchDown, float RecoilYawRight, float RecoilYawLeft);
 
+	UFUNCTION(BlueprintCallable, Category = "Player")
+	void SetRecoilMod(float RecoilModifier);
+	
 };

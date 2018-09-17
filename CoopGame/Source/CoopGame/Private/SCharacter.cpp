@@ -6,6 +6,7 @@
 #include "GameFramework/PawnMovementComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "../Public/Components/SHealthComponent.h"
+#include "Public/TimerManager.h"
 #include "Net/UnrealNetwork.h"
 #include "Public/SWeapon.h"
 #include "CoopGame.h"
@@ -35,6 +36,10 @@ ASCharacter::ASCharacter()
 	ZoomedFOV = 50;
 	ZoomedInterpSpeed = 16;
 
+	RecoilMod = 1;
+	RecoilApplyRate = 0.1f;
+	RecoilDamping = 1.0f;
+
 	WeaponAttachSocketName = "WeaponSocket";
 }
 
@@ -60,6 +65,49 @@ void ASCharacter::BeginPlay()
 		}
 	}		
 }
+
+
+void ASCharacter::Recoil(float RecoilPitchUp, float RecoilPitchDown, float RecoilYawRight, float RecoilYawLeft)
+{
+	bIsRecoiling = true;
+
+	FinalRecoilPitch += FMath::FRandRange(RecoilPitchDown, -RecoilPitchUp) * RecoilMod;
+	FinalRecoilYaw += FMath::FRandRange(-RecoilYawLeft, RecoilYawRight) * RecoilMod;
+
+	FTimerHandle TimerHandle_Recoil;
+	FTimerDelegate TimerDel;
+
+	TimerDel.BindUFunction(this, FName("StartRecoiling"), FinalRecoilPitch, FinalRecoilYaw);
+	GetWorldTimerManager().SetTimer(TimerHandle_Recoil, TimerDel, RecoilApplyRate, true, 0.0);
+
+// Attempts at doing the above logic
+//	FTimerDelegate = FTimerDelegate::CreateUObject( this, StartRecoiling, FinalRecoilPitch, FinalRecoilYaw);
+//	GetWorldTimerManager().SetTimer(TimerHandle_Recoil, this, &ASCharacter::StartRecoiling(FinalRecoilPitch, FinalRecoilYaw), RecoilApplyRate, true, 0.0f);
+}
+
+
+void ASCharacter::StartRecoiling(float RecoilPitch, float RecoilYaw)
+{
+	float PartialRecoilPitch;
+	float PartialRecoilYaw;
+
+	PartialRecoilPitch = RecoilPitch * (RecoilApplyRate / RecoilTime);
+	PartialRecoilYaw = RecoilYaw * (RecoilApplyRate / RecoilTime);
+
+	AddControllerPitchInput(PartialRecoilPitch);
+	AddControllerYawInput(PartialRecoilYaw);
+
+	FinalRecoilPitch -= RecoilDamping;
+	FinalRecoilYaw -= RecoilDamping;
+}
+
+
+void ASCharacter::StopRecoiling()
+{
+	bIsRecoiling = false;
+}
+
+
 
 // Called every frame
 void ASCharacter::Tick(float DeltaTime)
@@ -93,15 +141,21 @@ void ASCharacter::StopFire()
 }
 
 
+// Adds the float to the recoil multiplier (0 = no impact)
+void ASCharacter::SetRecoilMod(float RecoilModifier)
+{
+	RecoilMod += RecoilModifier;
+}
+
+
 void ASCharacter::BeginZoom()
 {
 	bWantsToZoom = true;
 	SpringArmComp->CameraLagSpeed = 20;
+	
+	// Reduce recoil when zooming
+	RecoilMod += -0.5f;
 
-	if (CurrentWeapon)
-	{
-		CurrentWeapon->SetRecoilMod(-0.5f);
-	}
 }
 
 
@@ -109,11 +163,9 @@ void ASCharacter::EndZoom()
 {
 	bWantsToZoom = false;
 	SpringArmComp->CameraLagSpeed = 15;
-
-	if (CurrentWeapon)
-	{
-		CurrentWeapon->SetRecoilMod(0.5f);
-	}
+	
+	// Reduce recoil when zooming
+	RecoilMod += 0.5f;
 }
 
 
