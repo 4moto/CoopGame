@@ -168,9 +168,9 @@ void ASWeapon::Fire()
 		}
 		
 		// Apply Weapon recoil
-		if (RecoilingCharacter)
+		if (RecoilingCharacter && PC)
 		{
-			RecoilingCharacter->Recoil(RecoilPitchUp, RecoilPitchDown, RecoilYawRight, RecoilYawRight);
+			RecoilingCharacter->Recoil(RecoilPitchUp, RecoilPitchDown, RecoilYawRight, RecoilYawLeft);
 		}
 			
 		LastFireTime = GetWorld()->TimeSeconds;

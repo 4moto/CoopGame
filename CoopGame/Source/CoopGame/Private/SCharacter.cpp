@@ -37,7 +37,7 @@ ASCharacter::ASCharacter()
 	ZoomedInterpSpeed = 16;
 
 	RecoilMod = 1;
-	RecoilTime = 0.2f;
+	RecoilTime = 0.1f;
 	RecoilApplyRate = 0.02f;
 	RecoilDamping = 0.01f;
 
@@ -72,14 +72,18 @@ void ASCharacter::Recoil(float RecoilPitchUp, float RecoilPitchDown, float Recoi
 {
 	bIsRecoiling = true;
 
-	FinalRecoilPitch += FMath::FRandRange(RecoilPitchDown, -RecoilPitchUp) * RecoilMod;
-	FinalRecoilYaw += FMath::FRandRange(-RecoilYawLeft, RecoilYawRight) * RecoilMod;
+	FinalRecoilPitch = FMath::FRandRange(-RecoilPitchUp, RecoilPitchDown) * RecoilMod;
+	FinalRecoilYaw = FMath::FRandRange(-RecoilYawLeft, RecoilYawRight) * RecoilMod;
 
 	FTimerDelegate TimerDel;
 
 	TimerDel.BindUFunction(this, FName("StartRecoiling"), FinalRecoilPitch, FinalRecoilYaw);
 	GetWorldTimerManager().SetTimer(TimerHandle_Recoil, TimerDel, RecoilApplyRate, true, 0.0);
+	GetWorldTimerManager().SetTimer(TimerHandle_StopRecoil, this, &ASCharacter::StopRecoiling, RecoilTime, false, RecoilTime);
 
+	UE_LOG(LogTemp, Log, TEXT("Final Recoil Pitch and Yaw: %s of %s"), *FString::SanitizeFloat(FinalRecoilPitch), *FString::SanitizeFloat(FinalRecoilYaw));
+	UE_LOG(LogTemp, Log, TEXT("Recoil Pitch and Up/Down: %s of %s"), *FString::SanitizeFloat(RecoilPitchUp), *FString::SanitizeFloat(RecoilPitchDown));
+	UE_LOG(LogTemp, Log, TEXT("Recoil Yaw and Left/Right: %s of %s"), *FString::SanitizeFloat(RecoilYawLeft), *FString::SanitizeFloat(RecoilYawRight));
 // Attempts at doing the above logic
 //	FTimerDelegate = FTimerDelegate::CreateUObject( this, StartRecoiling, FinalRecoilPitch, FinalRecoilYaw);
 //	GetWorldTimerManager().SetTimer(TimerHandle_Recoil, this, &ASCharacter::StartRecoiling(FinalRecoilPitch, FinalRecoilYaw), RecoilApplyRate, true, 0.0f);
@@ -100,7 +104,7 @@ void ASCharacter::StartRecoiling()
 //	UE_LOG(LogTemp, Log, TEXT("PartialRecoil Pitch and Yaw: %s of %s"), *FString::SanitizeFloat(PartialRecoilPitch), *FString::SanitizeFloat(PartialRecoilYaw));
 
 	//Damp out recoil
-	if (FinalRecoilPitch > 0)
+	if (PartialRecoilPitch > 0)
 	{
 		DampedPitch -= RecoilDamping;
 	}
@@ -109,7 +113,7 @@ void ASCharacter::StartRecoiling()
 		DampedPitch += RecoilDamping;
 	}
 	
-	if (FinalRecoilYaw > 0)
+	if (PartialRecoilYaw > 0)
 	{
 		DampedYaw -= RecoilDamping;
 	}
@@ -117,10 +121,8 @@ void ASCharacter::StartRecoiling()
 	{
 		DampedYaw += RecoilDamping;
 	}
-	UE_LOG(LogTemp, Log, TEXT("Recoil Pitch and Yaw: %s of %s"), *FString::SanitizeFloat(FinalRecoilPitch), *FString::SanitizeFloat(FinalRecoilYaw));
-	UE_LOG(LogTemp, Log, TEXT("Damped Pitch and Yaw: %s of %s"), *FString::SanitizeFloat(DampedPitch), *FString::SanitizeFloat(DampedYaw));
-
-	GetWorldTimerManager().SetTimer(TimerHandle_StopRecoil, this, &ASCharacter::StopRecoiling, RecoilTime, false, RecoilTime);
+//	UE_LOG(LogTemp, Log, TEXT("Final Recoil Pitch and Yaw: %s of %s"), *FString::SanitizeFloat(FinalRecoilPitch), *FString::SanitizeFloat(FinalRecoilYaw));
+//	UE_LOG(LogTemp, Log, TEXT("Damped Pitch and Yaw: %s of %s"), *FString::SanitizeFloat(DampedPitch), *FString::SanitizeFloat(DampedYaw));
 }
 
 
@@ -128,6 +130,11 @@ void ASCharacter::StopRecoiling()
 {
 	bIsRecoiling = false;
 	GetWorldTimerManager().ClearTimer(TimerHandle_Recoil);
+	
+	FinalRecoilPitch = 0.0f;
+	FinalRecoilYaw = 0.0f;
+	DampedPitch = 0.0f;
+	DampedYaw = 0.0f;
 }
 
 

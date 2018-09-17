@@ -80,13 +80,15 @@ protected:
 	float DampedYaw;
 
 	// The higher the number the slower the recoil effect is
+	UPROPERTY(EditDefaultsOnly, Category = "Recoil")
 	float RecoilTime;
 
 	// The interval between recoil 'kicks' -- very low is smoothest -- higher is most performant
 	UPROPERTY(meta = (ClampMin = 0.0001f, ClampMax = 0.5f))
 	float RecoilApplyRate;
 
-	// How quickly the recoil is reduced out
+	// How quickly the recoil is reduced
+	UPROPERTY(EditDefaultsOnly, Category = "Recoil")
 	float RecoilDamping;
 
 	UFUNCTION() // not sure I need this one with the way I'm implementing recoil
