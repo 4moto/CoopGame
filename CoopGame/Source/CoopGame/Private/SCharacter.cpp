@@ -37,8 +37,9 @@ ASCharacter::ASCharacter()
 	ZoomedInterpSpeed = 16;
 
 	RecoilMod = 1;
-	RecoilApplyRate = 0.1f;
-	RecoilDamping = 1.0f;
+	RecoilTime = 0.2f;
+	RecoilApplyRate = 0.02f;
+	RecoilDamping = 0.01f;
 
 	WeaponAttachSocketName = "WeaponSocket";
 }
@@ -74,7 +75,6 @@ void ASCharacter::Recoil(float RecoilPitchUp, float RecoilPitchDown, float Recoi
 	FinalRecoilPitch += FMath::FRandRange(RecoilPitchDown, -RecoilPitchUp) * RecoilMod;
 	FinalRecoilYaw += FMath::FRandRange(-RecoilYawLeft, RecoilYawRight) * RecoilMod;
 
-	FTimerHandle TimerHandle_Recoil;
 	FTimerDelegate TimerDel;
 
 	TimerDel.BindUFunction(this, FName("StartRecoiling"), FinalRecoilPitch, FinalRecoilYaw);
@@ -86,25 +86,48 @@ void ASCharacter::Recoil(float RecoilPitchUp, float RecoilPitchDown, float Recoi
 }
 
 
-void ASCharacter::StartRecoiling(float RecoilPitch, float RecoilYaw)
+void ASCharacter::StartRecoiling()
 {
 	float PartialRecoilPitch;
 	float PartialRecoilYaw;
 
-	PartialRecoilPitch = RecoilPitch * (RecoilApplyRate / RecoilTime);
-	PartialRecoilYaw = RecoilYaw * (RecoilApplyRate / RecoilTime);
+	PartialRecoilPitch = (FinalRecoilPitch + DampedPitch) * (RecoilApplyRate / RecoilTime);
+	PartialRecoilYaw = (FinalRecoilYaw + DampedYaw) * (RecoilApplyRate / RecoilTime);
 
 	AddControllerPitchInput(PartialRecoilPitch);
 	AddControllerYawInput(PartialRecoilYaw);
 
-	FinalRecoilPitch -= RecoilDamping;
-	FinalRecoilYaw -= RecoilDamping;
+//	UE_LOG(LogTemp, Log, TEXT("PartialRecoil Pitch and Yaw: %s of %s"), *FString::SanitizeFloat(PartialRecoilPitch), *FString::SanitizeFloat(PartialRecoilYaw));
+
+	//Damp out recoil
+	if (FinalRecoilPitch > 0)
+	{
+		DampedPitch -= RecoilDamping;
+	}
+	else
+	{
+		DampedPitch += RecoilDamping;
+	}
+	
+	if (FinalRecoilYaw > 0)
+	{
+		DampedYaw -= RecoilDamping;
+	}
+	else
+	{
+		DampedYaw += RecoilDamping;
+	}
+	UE_LOG(LogTemp, Log, TEXT("Recoil Pitch and Yaw: %s of %s"), *FString::SanitizeFloat(FinalRecoilPitch), *FString::SanitizeFloat(FinalRecoilYaw));
+	UE_LOG(LogTemp, Log, TEXT("Damped Pitch and Yaw: %s of %s"), *FString::SanitizeFloat(DampedPitch), *FString::SanitizeFloat(DampedYaw));
+
+	GetWorldTimerManager().SetTimer(TimerHandle_StopRecoil, this, &ASCharacter::StopRecoiling, RecoilTime, false, RecoilTime);
 }
 
 
 void ASCharacter::StopRecoiling()
 {
 	bIsRecoiling = false;
+	GetWorldTimerManager().ClearTimer(TimerHandle_Recoil);
 }
 
 

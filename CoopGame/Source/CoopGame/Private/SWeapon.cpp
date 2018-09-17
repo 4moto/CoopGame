@@ -178,7 +178,7 @@ void ASWeapon::Fire()
 	
 	ShotsFired++;
 
-	UE_LOG(LogTemp, Log, TEXT("BulletsFired: %s of %s"), *FString::SanitizeFloat(ShotsFired), *FString::SanitizeFloat(NumberOfBulletsPerShot));
+//	UE_LOG(LogTemp, Log, TEXT("BulletsFired: %s of %s"), *FString::SanitizeFloat(ShotsFired), *FString::SanitizeFloat(NumberOfBulletsPerShot));
 
 	if (NumberOfBulletsPerShot > ShotsFired)
 	{

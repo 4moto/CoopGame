@@ -66,10 +66,18 @@ protected:
 	UFUNCTION()
 	void OnHealthChanged(USHealthComponent* OwningHealthComp, float Health, float HealthDelta, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
 
+
+	// Recoil Variables and Functions
+
+	FTimerHandle TimerHandle_Recoil;
+	FTimerHandle TimerHandle_StopRecoil;
+
 	bool bIsRecoiling;
 	float RecoilMod;
 	float FinalRecoilPitch;
 	float FinalRecoilYaw;
+	float DampedPitch;
+	float DampedYaw;
 
 	// The higher the number the slower the recoil effect is
 	float RecoilTime;
@@ -80,13 +88,12 @@ protected:
 
 	// How quickly the recoil is reduced out
 	float RecoilDamping;
-	
 
 	UFUNCTION() // not sure I need this one with the way I'm implementing recoil
 	void StopRecoiling();
 
 	UFUNCTION()
-	void StartRecoiling(float RecoilPitch, float RecoilYaw);
+	void StartRecoiling();
 
 
 public:	
