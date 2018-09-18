@@ -4,6 +4,7 @@
 #include "../../Public/Components/SHealthComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "GameFramework/Actor.h"
+#include "Components/ActorComponent.h"
 #include "SGameMode.h"
 
 
@@ -52,7 +53,8 @@ void USHealthComponent::HandleTakeAnyDamage(AActor * DamagedActor, float Damage,
 	//Update health clamped
 	Health = FMath::Clamp(Health - Damage, 0.0f, DefaultHealth);
 	
-	UE_LOG(LogTemp, Log, TEXT("HealthChanged: %s of %s"), *FString::SanitizeFloat(Health), *DamagedActor->GetName());
+	UE_LOG(LogTemp, Log, TEXT("%s did %s damage to %s"), *DamageCauser->GetName(), *FString::SanitizeFloat(Damage), *DamagedActor->GetName());
+	UE_LOG(LogTemp, Log, TEXT("%s has %s health left"), *DamagedActor->GetName(), *FString::SanitizeFloat(Health));
 
 	bIsDead = Health <= 0.0f;
 
@@ -114,7 +116,6 @@ bool USHealthComponent::IsFriendly(AActor* ActorA, AActor* ActorB)
 	}
 
 	return HealthCompA->TeamNum == HealthCompB->TeamNum;
-
 }
 
 

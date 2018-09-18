@@ -36,6 +36,7 @@ ASWeapon::ASWeapon()
 	BulletSpread = 0.0f;
 	NumberOfBulletsPerShot = 1;
 	ShotsFired = 0;
+	CritMultiplier = 4.0f;
 
 	RecoilMod = 1.0f;
 	AimingSpreadMod = 0.33f;

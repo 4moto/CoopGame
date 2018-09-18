@@ -81,9 +81,13 @@ void ASCharacter::Recoil(float RecoilPitchUp, float RecoilPitchDown, float Recoi
 	GetWorldTimerManager().SetTimer(TimerHandle_Recoil, TimerDel, RecoilApplyRate, true, 0.0);
 	GetWorldTimerManager().SetTimer(TimerHandle_StopRecoil, this, &ASCharacter::StopRecoiling, RecoilTime, false, RecoilTime);
 
+
+	/* Logging Recoil Events
 	UE_LOG(LogTemp, Log, TEXT("Final Recoil Pitch and Yaw: %s of %s"), *FString::SanitizeFloat(FinalRecoilPitch), *FString::SanitizeFloat(FinalRecoilYaw));
 	UE_LOG(LogTemp, Log, TEXT("Recoil Pitch and Up/Down: %s of %s"), *FString::SanitizeFloat(RecoilPitchUp), *FString::SanitizeFloat(RecoilPitchDown));
 	UE_LOG(LogTemp, Log, TEXT("Recoil Yaw and Left/Right: %s of %s"), *FString::SanitizeFloat(RecoilYawLeft), *FString::SanitizeFloat(RecoilYawRight));
+	*/
+
 // Attempts at doing the above logic
 //	FTimerDelegate = FTimerDelegate::CreateUObject( this, StartRecoiling, FinalRecoilPitch, FinalRecoilYaw);
 //	GetWorldTimerManager().SetTimer(TimerHandle_Recoil, this, &ASCharacter::StartRecoiling(FinalRecoilPitch, FinalRecoilYaw), RecoilApplyRate, true, 0.0f);
