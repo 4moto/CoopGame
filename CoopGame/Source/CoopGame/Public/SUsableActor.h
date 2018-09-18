@@ -10,11 +10,12 @@ UCLASS()
 class COOPGAME_API ASUsableActor : public AActor
 {
 	GENERATED_BODY()
-	
+
+public:	
+
 	UPROPERTY(EditDefaultsOnly, Category = "Mesh")
 	UStaticMeshComponent* MeshComp;
 
-public:	
 	// Sets default values for this actor's properties
 	ASUsableActor();
 
