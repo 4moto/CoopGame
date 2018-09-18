@@ -43,16 +43,16 @@ protected:
 	void EndCrouch();
 
 	UPROPERTY(EditDefaultsOnly, Category = "Player")
-	float ZoomedFOV;
+	float AimingFOV;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Player", meta = (ClampMin = 0.1, ClampMax = 100))
-	float ZoomedInterpSpeed;
+	float AimingInterpSpeed;
 
 	/* Default FOV set during begin play */
 	float DefaultFOV;
 
-	void BeginZoom();
-	void EndZoom();
+	void BeginAiming();
+	void EndAiming();
 
 	UPROPERTY(Replicated)
 	ASWeapon* CurrentWeapon;
@@ -97,7 +97,6 @@ protected:
 	UFUNCTION()
 	void StartRecoiling();
 
-
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -107,16 +106,59 @@ public:
 
 	virtual FVector GetPawnViewLocation() const override;
 
-	bool bWantsToZoom;
-
 	UFUNCTION(BlueprintCallable, Category = "Player")
 		void StartFire();
 	UFUNCTION(BlueprintCallable, Category = "Player")
 		void StopFire();
-	
+
 	/* Pawn Died Previously */
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Player")
 		bool bDied;
+
+	/*Client mapped to Input */
+		void OnStartJump();
+
+	/* Client mapped to Input */
+	void OnStopJump();
+
+	/* Is character currently performing a jump action. Resets on landed.  */
+	UPROPERTY(Transient, Replicated)
+		bool bIsJumping;
+
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+		bool IsInitiatedJump() const;
+
+	void SetIsJumping(bool NewJumping);
+
+	UFUNCTION(Reliable, Server, WithValidation)
+		void ServerSetIsJumping(bool NewJumping);
+
+
+	/* Client mapped to Input */
+	void OnStartSprinting();
+
+	/* Client mapped to Input */
+	void OnStopSprinting();
+
+	/* Client/local call to update sprint state  */
+	void SetSprinting(bool NewSprinting);
+
+	/* Server side call to update actual sprint state */
+	UFUNCTION(Server, Reliable, WithValidation)
+		void ServerSetSprinting(bool NewSprinting);
+
+	UFUNCTION(BlueprintCallable, Category = Movement)
+		bool IsSprinting() const;
+
+	float GetSprintingSpeedModifier() const;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Movement")
+		float SprintingSpeedMod;
+
+	/* Character wants to run, checked during Tick to see if allowed */
+	UPROPERTY(Transient, Replicated)
+		bool bWantsToRun;
+
 	
 	/* Camera Recoil */
 	UFUNCTION(BlueprintCallable, Category = "Player")
@@ -124,5 +166,51 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Player")
 	void SetRecoilMod(float RecoilModifier);
+
+	/************************************************************************/
+	/* Object Interaction                                                   */
+	/************************************************************************/
+
+	/* Use the usable actor currently in focus, if any */
+	virtual void Use();
+
+	UFUNCTION(Server, Reliable, WithValidation)
+		void ServerUse();
+
+	class ASUsableActor* GetUsableInView();
+
+	ASUsableActor* FocusedUsableActor;
+
+	/*Max distance to use/focus on actors. */
+	UPROPERTY(EditDefaultsOnly, Category = "ObjectInteraction")
+		float MaxUseDistance;
+
+	/* True only in first frame when focused on a new usable actor. */
+	bool bHasNewFocus;
+
+	/************************************************************************/
+	/* Aiming                                                            */
+	/************************************************************************/
+
+	void SetAiming(bool NewAiming);
+
+	UFUNCTION(Server, Reliable, WithValidation)
+		void ServerSetAiming(bool NewAiming);
+
+	/* Is player aiming down sights */
+	UFUNCTION(BlueprintCallable, Category = "Aiming")
+		bool IsAiming() const;
+
+	float GetAimingSpeedModifier() const;
+
+	/* Retrieve Pitch/Yaw from current camera */
+	UFUNCTION(BlueprintCallable, Category = "Aiming")
+		FRotator GetAimOffsets() const;
+
+	UPROPERTY(Transient, Replicated)
+		bool bIsAiming;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Aiming")
+		float AimingSpeedMod;
 	
 };

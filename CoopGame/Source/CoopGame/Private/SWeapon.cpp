@@ -102,7 +102,7 @@ void ASWeapon::Fire()
 		}
 		else
 		{
-			if (RecoilingCharacter->bWantsToZoom)
+			if (RecoilingCharacter->bIsAiming)
 			{
 				float AimedHalfRad = HalfRad * AimingSpreadMod;
 				ShotDirection = FMath::VRandCone(ShotDirection, AimedHalfRad, AimedHalfRad);
